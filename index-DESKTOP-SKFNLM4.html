@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Madhushri 💗</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    color: #5a1f3d;
+    background: linear-gradient(160deg, #ffe3ee, #ffc9dd 50%, #f7b6d2);
+    overflow-x: hidden;
+  }
+  #hearts { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .heart {
+    position: absolute; bottom: -40px;
+    animation: floatUp linear forwards;
+    opacity: 0.85;
+  }
+  @keyframes floatUp {
+    to { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+  .screen {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .screen.active { display: flex; }
+  .card {
+    width: 100%; max-width: 560px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 36px 28px;
+    box-shadow: 0 20px 50px rgba(200, 60, 120, 0.25);
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  h1 { font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-bottom: 8px; }
+  .sub { font-weight: 300; margin-bottom: 24px; }
+  .progress { font-size: 1.4rem; margin-bottom: 18px; letter-spacing: 6px; }
+  .question { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 20px; }
+  input {
+    width: 100%; padding: 14px 18px;
+    border: 2px solid #ffb3d0; border-radius: 50px;
+    font: inherit; text-align: center; color: #5a1f3d;
+    outline: none; background: #fff;
+  }
+  input:focus { border-color: #e5387f; }
+  button {
+    margin-top: 18px; padding: 14px 34px;
+    border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #ff5c9a, #e5387f);
+    color: #fff; font: inherit; font-size: 1rem; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(229, 56, 127, 0.4);
+    transition: transform 0.2s;
+  }
+  button:hover { transform: scale(1.05); }
+  .msg { min-height: 24px; margin-top: 14px; font-size: 0.95rem; color: #c2185b; }
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-5px); }
+  }
+  .hidden { display: none; }
+
+  /* Wish + Journey + Memories pages */
+  .wish-card { max-width: 680px; text-align: left; padding: 40px 30px; }
+  .wish-card h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.5rem;
+    text-align: center; line-height: 1.4; margin-bottom: 18px;
+  }
+  .wish-card h3 {
+    font-family: 'Dancing Script', cursive; font-size: 2.2rem;
+    text-align: center; margin-bottom: 20px;
+  }
+  .wish-card p { line-height: 1.85; margin-bottom: 16px; font-weight: 300; }
+  .big { font-family: 'Dancing Script', cursive; font-size: 1.8rem; text-align: center; margin-top: 20px; }
+  .nav { text-align: center; }
+  .fade-line { opacity: 0; transform: translateY(14px); animation: fadeIn 0.9s forwards; }
+  #mute {
+    position: fixed; top: 14px; right: 14px; z-index: 5;
+    margin: 0; padding: 10px 14px; font-size: 1.1rem;
+  }
+
+  /* Gallery */
+  .gallery { columns: 2; column-gap: 10px; margin-top: 8px; }
+  .gallery img {
+    width: 100%; display: block; margin-bottom: 10px;
+    border-radius: 16px; cursor: pointer; break-inside: avoid;
+    box-shadow: 0 6px 16px rgba(200, 60, 120, 0.25);
+    transition: transform 0.2s;
+  }
+  .gallery img:hover { transform: scale(1.02); }
+  @media (min-width: 700px) { .gallery { columns: 3; } }
+
+  /* Lightbox */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 20;
+    background: rgba(60, 10, 35, 0.92);
+    display: none; align-items: center; justify-content: center;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 92vw; max-height: 80vh; border-radius: 14px; }
+  .lb-btn {
+    position: absolute; margin: 0; padding: 12px 18px;
+    background: rgba(255,255,255,0.2); box-shadow: none; font-size: 1.3rem;
+  }
+  #lbPrev { left: 10px; top: 50%; }
+  #lbNext { right: 10px; top: 50%; }
+  #lbClose { top: 14px; right: 14px; }
+</style>
+</head>
+<body>
+
+<div id="hearts"></div>
+<audio id="song" src="manamaganin-sathiyam.mp3" loop preload="auto"></audio>
+<button id="mute" class="hidden" aria-label="Mute or unmute music">🔊</button>
+
+<!-- PAGE 1: QUIZ -->
+<div class="screen active" id="quiz">
+  <div class="card" id="quizCard">
+    <h1>Before I wish you… 💗</h1>
+    <p class="sub">Three little questions, just for you 💕</p>
+    <div class="progress" id="progress">🤍🤍🤍</div>
+    <div class="question" id="question"></div>
+    <input id="answer" type="text" autocomplete="off" placeholder="Type your answer 💗">
+    <div class="msg" id="msg"></div>
+    <button id="submit">Check 💗</button>
+    <button id="open" class="hidden">Open My Heart 💖</button>
+  </div>
+</div>
+
+<!-- PAGE 2: BIRTHDAY WISH -->
+<div class="screen" id="wish">
+  <div class="card wish-card">
+    <h2 class="fade-line" style="animation-delay:0.2s">HAPPY BIRTHDAY TO THE WOMAN WHO FEELS EVERYTHING TO ME 💗</h2>
+
+    <p class="fade-line" style="animation-delay:1s">
+      Happy 21st Birthday, Madhushri 💗. May this year be filled with laughter and joy 💗.
+      You're getting closer to your goals; don't stop there, keep running.
+      If the world feels heavier, come to me; I have all my ears for you 💗.
+    </p>
+
+    <div class="big fade-line" style="animation-delay:1.8s">💗 💖 💕 💞 💗</div>
+
+    <div class="nav fade-line" style="animation-delay:2.6s">
+      <button id="toJourney">Our Journey 💖</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: THE JOURNEY -->
+<div class="screen" id="journey">
+  <div class="card wish-card">
+    <h3 class="fade-line" style="animation-delay:0.2s">The Journey 💗</h3>
+
+    <p class="fade-line" style="animation-delay:0.9s">
+      It all started when we were in our first semester at different polytechnics.
+      All it needed was one reply for us to start talking, but it took me months, nearly a year,
+      to confess my feelings for you. Still, the journey keeps going. Along the way we have gone
+      through a lot: happy moments to remember, and some painful incidents that still stay in our hearts.
+      Sometimes our chat history is full of stickers, and our care for each other shows up as
+      "Oru 20rm pliss", "Morning", "Good night" and "Saptingalaa". And of course, there were moments
+      when we misunderstood each other, got hurt, argued, and stayed silent. But somehow, after
+      everything, the journey continued.
+    </p>
+
+    <p class="fade-line" style="animation-delay:1.9s">
+      There were moments I wished I could change, words I wished I had never said, and memories I
+      wish I could experience again. But every moment, happy or painful, became a part of our story.
+      We may not have had a perfect journey, but we're still learning to understand each other, and
+      neither of us gave up on the other. I believe that is our biggest strength.
+    </p>
+
+    <div class="big fade-line" style="animation-delay:2.8s">💗 💖 💕 💞 💗</div>
+
+    <div class="nav fade-line" style="animation-delay:3.4s">
+      <button id="toMemories">Our Memories 📸</button>
+      <br>
+      <button id="backToWish">Back to my wish 💗</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: MEMORIES -->
+<div class="screen" id="memories">
+  <div class="card wish-card">
+    <h3>Our Memories 📸</h3>
+    <p style="text-align:center">Tap a photo to see it bigger 💗</p>
+    <div class="gallery" id="gallery"></div>
+    <div class="nav">
+      <button id="backToJourney">Back to the journey 💗</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button class="lb-btn" id="lbClose">✕</button>
+  <button class="lb-btn" id="lbPrev">‹</button>
+  <img id="lbImg" alt="">
+  <button class="lb-btn" id="lbNext">›</button>
+</div>
+
+<script>
+  /* ---------- YOUR PHOTOS ---------- */
+  const photos = [
+    "photos/01.jpg", "photos/02.jpg", "photos/03.jpg", "photos/04.jpg",
+    "photos/05.jpg", "photos/06.jpg", "photos/07.jpg", "photos/08.jpg",
+    "photos/09.jpg", "photos/10.jpg", "photos/11.jpg", "photos/12.jpg",
+    "photos/13.jpg", "photos/14.jpg", "photos/15.jpg", "photos/16.jpg",
+    "photos/17.jpg", "photos/18.jpg"
+  ];
+
+  const questions = [
+    { q: "The first gift that you gave me? 🎁",
+      ok: a => a.includes("ferrero") },
+    { q: "Where did our first meeting / date take place? 🥤",
+      ok: a => a.includes("mixue") },
+    { q: "A movie I repeatedly watched when I started missing you? 🎬",
+      ok: a => a.includes("nanna") }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const clean = s => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  let step = 0;
+
+  function show(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    const page = $(id);
+    page.classList.add("active");
+    page.querySelectorAll(".fade-line").forEach(el => {
+      el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function render() {
+    $("question").textContent = questions[step].q;
+    $("progress").textContent = questions.map((_, i) => i < step ? "💗" : "🤍").join("");
+    $("answer").value = "";
+    $("msg").textContent = "";
+    $("answer").focus();
+  }
+
+  function check() {
+    const val = clean($("answer").value);
+    if (questions[step].ok(val)) {
+      step++;
+      if (step === questions.length) {
+        $("progress").textContent = "💗💗💗";
+        $("question").textContent = "You remembered everything 💖";
+        $("answer").classList.add("hidden");
+        $("submit").classList.add("hidden");
+        $("msg").textContent = "";
+        $("open").classList.remove("hidden");
+        burst();
+      } else {
+        $("msg").textContent = "Correct 💗";
+        setTimeout(render, 600);
+      }
+    } else {
+      $("msg").textContent = "Hmm, not quite… think again 💕";
+      const card = $("quizCard");
+      card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+    }
+  }
+
+  $("submit").onclick = check;
+  $("answer").addEventListener("keydown", e => { if (e.key === "Enter") check(); });
+
+  $("open").onclick = () => {
+    const song = $("song");
+    song.volume = 0.7;
+    song.play().catch(() => {});
+    $("mute").classList.remove("hidden");
+    show("wish");
+    burst(40);
+  };
+
+  $("toJourney").onclick = () => show("journey");
+  $("backToWish").onclick = () => show("wish");
+  $("toMemories").onclick = () => show("memories");
+  $("backToJourney").onclick = () => show("journey");
+
+  $("mute").onclick = () => {
+    const song = $("song");
+    if (song.paused) { song.play(); $("mute").textContent = "🔊"; }
+    else { song.pause(); $("mute").textContent = "🔇"; }
+  };
+
+  /* ---------- Gallery + lightbox ---------- */
+  const gallery = $("gallery");
+  let current = 0;
+
+  photos.forEach((src, i) => {
+    const img = new Image();
+    img.src = src;
+    img.loading = "lazy";
+    img.alt = "Our memory " + (i + 1);
+    img.onerror = () => img.remove();          // hides any missing file
+    img.onclick = () => openLightbox([...gallery.children].indexOf(img));
+    gallery.appendChild(img);
+  });
+
+  function openLightbox(i) {
+    current = i;
+    $("lbImg").src = gallery.children[current].src;
+    $("lightbox").classList.add("open");
+  }
+  function step2(d) {
+    const n = gallery.children.length;
+    current = (current + d + n) % n;
+    $("lbImg").src = gallery.children[current].src;
+  }
+  $("lbNext").onclick = () => step2(1);
+  $("lbPrev").onclick = () => step2(-1);
+  $("lbClose").onclick = () => $("lightbox").classList.remove("open");
+  $("lightbox").addEventListener("click", e => {
+    if (e.target.id === "lightbox") $("lightbox").classList.remove("open");
+  });
+  document.addEventListener("keydown", e => {
+    if (!$("lightbox").classList.contains("open")) return;
+    if (e.key === "ArrowRight") step2(1);
+    if (e.key === "ArrowLeft") step2(-1);
+    if (e.key === "Escape") $("lightbox").classList.remove("open");
+  });
+
+  /* ---------- Floating hearts ---------- */
+  const emojis = ["💗", "💗", "💗", "💖", "💕", "💞", "🌸"];
+  function spawn() {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 16 + Math.random() * 26 + "px";
+    h.style.animationDuration = 6 + Math.random() * 6 + "s";
+    $("hearts").appendChild(h);
+    setTimeout(() => h.remove(), 12500);
+  }
+  function burst(n = 25) { for (let i = 0; i < n; i++) setTimeout(spawn, i * 60); }
+  setInterval(spawn, 700);
+
+  render();
+</script>
+</body>
+</html>
